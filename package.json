@@ -33,7 +33,7 @@
   },
   "build": {
     "appId": "com.rafi3.fixyourgrammar",
-    "productName": "fixyourgrammar",
+    "productName": "Fix Your Grammar",
     "files": [
       "dist/**/*",
       "package.json",
@@ -44,7 +44,7 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "assets/icon.ico"
+      "icon": "assets/icon.png"
     },
     "linux": {
       "target": "AppImage"
