@@ -10,13 +10,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 	try {
 		const existing = await window.electronAPI.getApiKey();
 		if (input) input.value = existing || '';
-	} catch {}
+	} catch { }
 
 	try {
 		const existingKeybind = await window.electronAPI.getKeybind();
 		pendingKeybind = existingKeybind || 'Alt+A';
 		if (keybindInput) keybindInput.value = pendingKeybind;
-	} catch {}
+	} catch { }
 
 	if (keybindInput) {
 		keybindInput.addEventListener('focus', () => {
