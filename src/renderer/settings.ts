@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const saveBtn = document.getElementById('saveBtn');
 	const resetBtn = document.getElementById('resetBtn');
 	const resetKeybindBtn = document.getElementById('resetKeybindBtn');
+	const autoLaunchCheckbox = document.getElementById('autoLaunch') as HTMLInputElement | null;
 
 	let pendingKeybind = '';
 
@@ -16,6 +17,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 		const existingKeybind = await window.electronAPI.getKeybind();
 		pendingKeybind = existingKeybind || 'Alt+A';
 		if (keybindInput) keybindInput.value = pendingKeybind;
+	} catch { }
+
+	try {
+		const autoLaunch = await window.electronAPI.getAutoLaunch();
+		if (autoLaunchCheckbox) autoLaunchCheckbox.checked = autoLaunch;
 	} catch { }
 
 	if (keybindInput) {
@@ -69,6 +75,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 			await window.electronAPI.setApiKey(key);
 			if (pendingKeybind) {
 				await window.electronAPI.setKeybind(pendingKeybind);
+			}
+			if (autoLaunchCheckbox) {
+				await window.electronAPI.setAutoLaunch(autoLaunchCheckbox.checked);
 			}
 			saveBtn.textContent = 'Saved!';
 			setTimeout(() => (saveBtn.textContent = 'Save'), 1200);

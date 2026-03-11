@@ -39,6 +39,7 @@ class ElectronApp {
 
 			this.currentKeybind = this.bacaKeybind();
 			this.ensureSettingsFile();
+			this.applyAutoLaunch();
 			this.buatWindow();
 			this.registerGlobalShortcuts();
 			this.setupEventHandlers();
@@ -61,7 +62,7 @@ class ElectronApp {
 	private ensureSettingsFile(): void {
 		try {
 			if (!fs.existsSync(this.settingsFilePath)) {
-				fs.writeFileSync(this.settingsFilePath, JSON.stringify({ geminiApiKey: '', keybind: DEFAULT_KEYBIND }, null, 2), 'utf-8');
+				fs.writeFileSync(this.settingsFilePath, JSON.stringify({ geminiApiKey: '', keybind: DEFAULT_KEYBIND, autoLaunch: true }, null, 2), 'utf-8');
 			}
 		} catch (e) {
 			console.error('Failed to init settings file:', e);
@@ -113,6 +114,39 @@ class ElectronApp {
 		} catch (e) {
 			console.error('Failed to save keybind:', e);
 		}
+	}
+
+	private bacaAutoLaunch(): boolean {
+		try {
+			const raw = fs.readFileSync(this.settingsFilePath, 'utf-8');
+			const parsed = JSON.parse(raw || '{}');
+			return parsed.autoLaunch !== false; // default true
+		} catch {
+			return true;
+		}
+	}
+
+	private simpanAutoLaunch(enabled: boolean): void {
+		try {
+			const raw = fs.existsSync(this.settingsFilePath) ? fs.readFileSync(this.settingsFilePath, 'utf-8') : '{}';
+			const parsed = JSON.parse(raw || '{}');
+			parsed.autoLaunch = enabled;
+			fs.writeFileSync(this.settingsFilePath, JSON.stringify(parsed, null, 2), 'utf-8');
+			this.applyAutoLaunch();
+		} catch (e) {
+			console.error('Failed to save autoLaunch:', e);
+		}
+	}
+
+	private applyAutoLaunch(): void {
+		const enabled = this.bacaAutoLaunch();
+		const appFolder = path.dirname(process.execPath);
+		const ourExeName = path.basename(process.execPath);
+		const stubLauncher = path.resolve(appFolder, '..', ourExeName);
+		app.setLoginItemSettings({
+			openAtLogin: enabled,
+			path: stubLauncher,
+		});
 	}
 
 	private updateKeybind(newKeybind: string): void {
@@ -244,12 +278,21 @@ class ElectronApp {
 	}
 
 	private ambilTextDiPilihDanTunjuin(): void {
+		// Save old clipboard and clear it so we can detect fresh copy
+		const oldClipboard = clipboard.readText();
+		clipboard.writeText('');
+
 		if (process.platform === 'win32') {
 			exec('powershell -command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait(\'^c\')"', (error: any) => {
 				if (error) {
 					console.log('Error capturing text:', error);
 				}
 				setTimeout(() => {
+					const newText = clipboard.readText();
+					if (!newText || !newText.trim()) {
+						// Ctrl+C didn't capture anything, restore old clipboard
+						clipboard.writeText(oldClipboard);
+					}
 					this.tunjuinWindowDenganTextDipilih();
 				}, 100);
 			});
@@ -259,6 +302,10 @@ class ElectronApp {
 					console.log('Error capturing text:', error);
 				}
 				setTimeout(() => {
+					const newText = clipboard.readText();
+					if (!newText || !newText.trim()) {
+						clipboard.writeText(oldClipboard);
+					}
 					this.tunjuinWindowDenganTextDipilih();
 				}, 100);
 			});
@@ -268,6 +315,10 @@ class ElectronApp {
 					console.log('Error capturing text:', error);
 				}
 				setTimeout(() => {
+					const newText = clipboard.readText();
+					if (!newText || !newText.trim()) {
+						clipboard.writeText(oldClipboard);
+					}
 					this.tunjuinWindowDenganTextDipilih();
 				}, 100);
 			});
@@ -425,6 +476,14 @@ class ElectronApp {
 			this.simpanKeybind(keybind || DEFAULT_KEYBIND);
 		});
 
+		ipcMain.handle('get-auto-launch', () => {
+			return this.bacaAutoLaunch();
+		});
+
+		ipcMain.handle('set-auto-launch', (_event, enabled: boolean) => {
+			this.simpanAutoLaunch(enabled);
+		});
+
 		ipcMain.handle("pilih-text", (event, text: string) => {
 			clipboard.writeText(text);
 
@@ -456,14 +515,6 @@ class ElectronApp {
 		});
 	}
 }
-
-const appFolder = path.dirname(process.execPath)
-const ourExeName = path.basename(process.execPath)
-const stubLauncher = path.resolve(appFolder, '..', ourExeName)
-app.setLoginItemSettings({
-	openAtLogin: true,
-	path: stubLauncher,
-});
 
 const gotTheLock = app.requestSingleInstanceLock();
 

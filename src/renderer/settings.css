@@ -88,3 +88,24 @@ input.recording {
     padding: 8px 10px;
     font-size: .85rem
 }
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 14px 0 0;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #3b82f6;
+    cursor: pointer;
+}
+
+.checkbox-wrapper label {
+    color: #cbd5e1;
+    font-size: .9rem;
+    cursor: pointer;
+    margin: 0;
+}

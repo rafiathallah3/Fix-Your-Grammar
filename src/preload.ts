@@ -16,7 +16,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   setApiKey: (key: string) => ipcRenderer.invoke('set-api-key', key),
   resetMainWindow: () => ipcRenderer.invoke('reset-main-window'),
   getKeybind: () => ipcRenderer.invoke('get-keybind'),
-  setKeybind: (keybind: string) => ipcRenderer.invoke('set-keybind', keybind)
+  setKeybind: (keybind: string) => ipcRenderer.invoke('set-keybind', keybind),
+  getAutoLaunch: () => ipcRenderer.invoke('get-auto-launch'),
+  setAutoLaunch: (enabled: boolean) => ipcRenderer.invoke('set-auto-launch', enabled)
 });
 
 // Type definitions for the exposed API
@@ -34,6 +36,8 @@ declare global {
       resetMainWindow: () => Promise<void>;
       getKeybind: () => Promise<string>;
       setKeybind: (keybind: string) => Promise<void>;
+      getAutoLaunch: () => Promise<boolean>;
+      setAutoLaunch: (enabled: boolean) => Promise<void>;
     };
   }
 } 
