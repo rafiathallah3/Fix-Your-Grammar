@@ -27,7 +27,7 @@ label {
     font-size: .9rem
 }
 
-input {
+input, select.input-select {
     width: 100%;
     padding: 10px 12px;
     border-radius: 8px;
@@ -35,7 +35,14 @@ input {
     background: #0b1220;
     color: #e5e7eb;
     outline: none;
-    box-sizing: border-box
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+select.input-select {
+    appearance: none;
+    cursor: pointer;
 }
 
 input::placeholder {

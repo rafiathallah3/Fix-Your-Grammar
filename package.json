@@ -12,7 +12,8 @@
     "copy-html": "copy src\\renderer\\index.html dist\\renderer\\ && copy src\\renderer\\settings.html dist\\renderer\\",
     "copy-css": "copy src\\renderer\\styles.css dist\\renderer\\ && copy src\\renderer\\settings.css dist\\renderer\\",
     "copy-all": "npm run copy-html && npm run copy-css",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "test": "jest"
   },
   "keywords": [
     "electron",
@@ -22,10 +23,13 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
     "electron": "^28.0.0",
-    "typescript": "^5.0.0",
-    "electron-builder": "^26.0.12"
+    "electron-builder": "^26.0.12",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.11",
+    "typescript": "^5.0.0"
   },
   "dependencies": {
     "@google/genai": "^1.13.0",

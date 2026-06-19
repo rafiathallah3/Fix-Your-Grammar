@@ -14,6 +14,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Settings
   getApiKey: () => ipcRenderer.invoke('get-api-key'),
   setApiKey: (key: string) => ipcRenderer.invoke('set-api-key', key),
+  getProvider: () => ipcRenderer.invoke('get-provider'),
+  setProvider: (provider: string) => ipcRenderer.invoke('set-provider', provider),
+  getOrApiKey: () => ipcRenderer.invoke('get-or-api-key'),
+  setOrApiKey: (key: string) => ipcRenderer.invoke('set-or-api-key', key),
+  getOrModel: () => ipcRenderer.invoke('get-or-model'),
+  setOrModel: (model: string) => ipcRenderer.invoke('set-or-model', model),
   resetMainWindow: () => ipcRenderer.invoke('reset-main-window'),
   getKeybind: () => ipcRenderer.invoke('get-keybind'),
   setKeybind: (keybind: string) => ipcRenderer.invoke('set-keybind', keybind),
@@ -33,6 +39,12 @@ declare global {
       onSelectedText: (callback: (text: string, status: "textDiPilih" | "textPerbaikan" | "textImprove") => void) => void;
       getApiKey: () => Promise<string>;
       setApiKey: (key: string) => Promise<void>;
+      getProvider: () => Promise<string>;
+      setProvider: (provider: string) => Promise<void>;
+      getOrApiKey: () => Promise<string>;
+      setOrApiKey: (key: string) => Promise<void>;
+      getOrModel: () => Promise<string>;
+      setOrModel: (model: string) => Promise<void>;
       resetMainWindow: () => Promise<void>;
       getKeybind: () => Promise<string>;
       setKeybind: (keybind: string) => Promise<void>;

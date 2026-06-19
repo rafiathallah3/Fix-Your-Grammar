@@ -11,8 +11,24 @@
 <body>
 	<div class="container">
 		<h1>Settings</h1>
-		<label for="apiKey">Gemini API Key</label>
-		<input type="password" id="apiKey" placeholder="Enter your API key" />
+		<label for="provider">Provider</label>
+		<select id="provider" class="input-select">
+			<option value="gemini">Google Gemini</option>
+			<option value="openrouter">OpenRouter</option>
+		</select>
+
+		<div id="geminiGroup">
+			<label for="apiKey">Gemini API Key</label>
+			<input type="password" id="apiKey" placeholder="Enter your API key" />
+		</div>
+
+		<div id="orGroup" style="display: none;">
+			<label for="orApiKey">OpenRouter API Key</label>
+			<input type="password" id="orApiKey" placeholder="Enter OpenRouter API key" />
+			<label for="orModel">OpenRouter Model</label>
+			<input type="text" id="orModel" placeholder="e.g. google/gemini-2.5-flash" />
+		</div>
+
 		<label for="keybind">Keybind</label>
 		<div class="keybind-wrapper">
 			<input type="text" id="keybind" readonly placeholder="Click and press keys..." />

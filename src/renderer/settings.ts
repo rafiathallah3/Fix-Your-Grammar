@@ -1,5 +1,11 @@
 document.addEventListener('DOMContentLoaded', async () => {
 	const input = document.getElementById('apiKey') as HTMLInputElement | null;
+	const providerSelect = document.getElementById('provider') as HTMLSelectElement | null;
+	const orApiKeyInput = document.getElementById('orApiKey') as HTMLInputElement | null;
+	const orModelInput = document.getElementById('orModel') as HTMLInputElement | null;
+	const geminiGroup = document.getElementById('geminiGroup');
+	const orGroup = document.getElementById('orGroup');
+
 	const keybindInput = document.getElementById('keybind') as HTMLInputElement | null;
 	const saveBtn = document.getElementById('saveBtn');
 	const resetBtn = document.getElementById('resetBtn');
@@ -8,9 +14,39 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	let pendingKeybind = '';
 
+	const updateVisibility = () => {
+		if (providerSelect?.value === 'openrouter') {
+			if (geminiGroup) geminiGroup.style.display = 'none';
+			if (orGroup) orGroup.style.display = 'block';
+		} else {
+			if (geminiGroup) geminiGroup.style.display = 'block';
+			if (orGroup) orGroup.style.display = 'none';
+		}
+	};
+
+	if (providerSelect) {
+		providerSelect.addEventListener('change', updateVisibility);
+	}
+
+	try {
+		const existingProvider = await window.electronAPI.getProvider();
+		if (providerSelect) providerSelect.value = existingProvider || 'gemini';
+		updateVisibility();
+	} catch { }
+
 	try {
 		const existing = await window.electronAPI.getApiKey();
 		if (input) input.value = existing || '';
+	} catch { }
+
+	try {
+		const existingOrKey = await window.electronAPI.getOrApiKey();
+		if (orApiKeyInput) orApiKeyInput.value = existingOrKey || '';
+	} catch { }
+
+	try {
+		const existingOrModel = await window.electronAPI.getOrModel();
+		if (orModelInput) orModelInput.value = existingOrModel || 'google/gemini-2.5-flash';
 	} catch { }
 
 	try {
@@ -69,10 +105,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 		});
 	}
 
-	if (saveBtn && input) {
+	if (saveBtn) {
 		saveBtn.addEventListener('click', async () => {
-			const key = input.value.trim();
-			await window.electronAPI.setApiKey(key);
+			if (providerSelect) {
+				await window.electronAPI.setProvider(providerSelect.value);
+			}
+			if (input) {
+				const key = input.value.trim();
+				await window.electronAPI.setApiKey(key);
+			}
+			if (orApiKeyInput) {
+				await window.electronAPI.setOrApiKey(orApiKeyInput.value.trim());
+			}
+			if (orModelInput) {
+				await window.electronAPI.setOrModel(orModelInput.value.trim());
+			}
 			if (pendingKeybind) {
 				await window.electronAPI.setKeybind(pendingKeybind);
 			}
